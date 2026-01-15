@@ -16,29 +16,34 @@ public class User {
     private Long id;
 
     @NotNull
-    @Email
-    @Column(name = "email")
-    private String email;
+    @Column(name = "username")
+    private String username;
 
     @NotNull
     @Column(name = "password")
     private String password;
 
+//    @NotNull
+    @Email
+    @Column(name = "email")
+    private String email;
+
     @NotNull
     @Column(name = "roles")
     private String roles;
 
-    @NotNull
     @OneToOne
     @JoinColumn(name = "id")
     private UserProfile userProfile;
 
     public User() {}
 
-    public User(String email, String password, UserProfile userProfile) {
-        this.email = email;
-        this.password = password;
-        this.userProfile = userProfile;
+    public String getUsername() {
+        return username;
+    }
+
+    public UserProfile getUserProfile() {
+        return userProfile;
     }
 
     public String getEmail() {
@@ -75,5 +80,13 @@ public class User {
 
     public void setRoles(String roles) {
         this.roles = roles;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setUserProfile(UserProfile userProfile) {
+        this.userProfile = userProfile;
     }
 }
