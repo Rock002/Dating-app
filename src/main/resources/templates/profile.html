@@ -7,10 +7,10 @@
 <body>
     <p>username:  </p>
     <p th:text="${user.username}"></p><br><br>
-
+    <
     <div class="photo-gallery" th:unless="${photos.isEmpty()}">
         <div class="photo-item" th:each="photo, iterStat : ${photos}">
-            <img th:src="${base64Images[iterStat.index]}" th:alt="${photo.originFileName}">
+            <img th:src="${base64Images[iterStat.index]}" th:alt="${photo.originFileName}" th:height="360px">
         </div>
     </div>
 </body>

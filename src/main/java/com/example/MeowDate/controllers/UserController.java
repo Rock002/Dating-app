@@ -2,7 +2,9 @@ package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.models.User;
+import com.example.MeowDate.models.UserProfile;
 import com.example.MeowDate.services.PhotoService;
+import com.example.MeowDate.services.UserProfileService;
 import com.example.MeowDate.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,17 +22,14 @@ public class UserController {
 
     private final UserService userService;
     private final PhotoService photoService;
+    private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserController(UserService userService, PhotoService photoService, PasswordEncoder passwordEncoder) {
+    public UserController(UserService userService, PhotoService photoService, UserProfileService userProfileService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.photoService = photoService;
+        this.userProfileService = userProfileService;
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @GetMapping("/main")
-    public String mainPage() {
-        return "main";
     }
 
     @GetMapping("/login")
@@ -71,7 +70,17 @@ public class UserController {
     public String postRegistration(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles("USER");
+
         userService.save(user);
+
+        UserProfile userProfile = new UserProfile();
+        userProfile.setFirstName(user.getUsername());
+        userProfile.setSex('x');
+        userProfile.setUser(user);
+
+        user.setUserProfile(userProfile);
+
+        userProfileService.save(userProfile);
 
         return "redirect:/login";
     }

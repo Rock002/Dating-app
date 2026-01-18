@@ -2,8 +2,9 @@ package com.example.MeowDate.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.Data;
+
+import java.time.LocalDate;
 
 @Entity
 @Data
@@ -18,31 +19,31 @@ public class UserProfile {
     @Column(name = "firstName")
     private String firstName;
 
-    @NotNull
-    @Positive
-    @Column(name = "age")
-    private int age;
+    @Column(name = "dateOfBirth")
+    private LocalDate dateOfBirth;
 
-    @NotNull
     @Column(name = "sex")
     private char sex;
 
-    @NotNull
     @Column(name = "coordinates")
     private double[] coordinates;
 
-    @NotNull
     @Column(name = "info")
     private String info;
 
+    @OneToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
     public UserProfile() {}
 
-    public UserProfile(String firstName, int age, char sex, @NotNull double[] coordinates, String info) {
+    public UserProfile(String firstName, LocalDate dateOfBirth, char sex, @NotNull double[] coordinates, String info, User user) {
         this.firstName = firstName;
-        this.age = age;
+        this.dateOfBirth = dateOfBirth;
         this.sex = sex;
         this.coordinates = coordinates;
         this.info = info;
+        this.user = user;
     }
 
     public Long getId() {
@@ -53,8 +54,16 @@ public class UserProfile {
         return firstName;
     }
 
-    public int getAge() {
-        return age;
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
+    public double[] getCoordinates() {
+        return coordinates;
+    }
+
+    public User getUser() {
+        return user;
     }
 
     public char getSex() {
@@ -69,8 +78,16 @@ public class UserProfile {
         this.firstName = firstName;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
+    }
+
+    public void setCoordinates(double[] coordinates) {
+        this.coordinates = coordinates;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public void setSex(char sex) {
