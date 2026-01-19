@@ -11,7 +11,12 @@
     <div style="font-size: 5rem;">❤️</div>
     <h1 class="mt-4">Страница "Лайки" в разработке</h1>
     <p class="lead text-muted">Здесь будут отображаться люди, которым вы понравились</p>
-    <a th:href="@{/main}" class="btn btn-primary mt-3">← На главную</a>
+    <a th:href="@{/}" class="btn btn-primary mt-3">← На главную</a>
+  </div>
+
+  <div class="likes" th:each="like, iterStat : ${likes}">
+    <p th:text="${like.sender}"></p>
+    <p th:text="${like.receiver}"></p>
   </div>
 </th:block>
 </body>
