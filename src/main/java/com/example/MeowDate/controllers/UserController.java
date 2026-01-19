@@ -48,20 +48,8 @@ public class UserController {
 
         var photos = photoService.getPhotosByUserId(user.getId());
 
-        List<String> base64Images = new ArrayList<>();
-        for (Photo photo : photos) {
-            String base64Image = Base64.getEncoder().encodeToString(photo.getBytes());
-
-            if (photo.getBytes() != null && photo.getBytes().length > 0) {
-                base64Images.add("data:image/jpeg;base64," + base64Image);
-            } else {
-                base64Images.add("");
-            }
-        }
-
         model.addAttribute("user", user);
         model.addAttribute("photos", photos);
-        model.addAttribute("base64Images", base64Images);
 
         return "profile";
     }

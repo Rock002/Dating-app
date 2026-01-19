@@ -24,4 +24,8 @@ public class PhotoService {
     public List<Photo> getPhotosByUserId(Long userId) {
         return photoRepository.findByUserId(userId);
     }
+
+    public Photo getPhotoById(Long id) {
+        return photoRepository.findById(id).orElse(null);
+    }
 }

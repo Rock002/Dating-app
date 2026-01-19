@@ -121,8 +121,8 @@
         <div class="profiles-grid">
             <div class="profile-card" th:each="profile : ${profiles}">
                 <!-- Фото пользователя -->
-                <div th:if="${profile.photos != null && !profile.photos.isEmpty()}">
-                    <img th:src="${profilePhotos.get(profile.id)}"
+                <div th:if="${profileFirstPhotoIds != null && profileFirstPhotoIds.containsKey(profile.id)}">
+                    <img th:src="@{/{id}(id=${profileFirstPhotoIds.get(profile.id)})}"
                          alt="Фото"
                          class="profile-photo">
                 </div>

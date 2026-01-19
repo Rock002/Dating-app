@@ -119,8 +119,8 @@
 
         <div th:if="${photos != null && !photos.isEmpty()}">
             <div class="photos-grid">
-                <div th:each="photo, iterStat : ${photos}">
-                    <img th:src="${base64Images[iterStat.index]}"
+                <div th:each="photo : ${photos}">
+                    <img th:src="@{/{id}(id=${photo.id})}"
                          th:alt="${photo.originFileName}"
                          class="photo-item">
                 </div>

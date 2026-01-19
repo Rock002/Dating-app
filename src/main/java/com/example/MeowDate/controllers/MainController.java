@@ -39,27 +39,18 @@ public class MainController {
 //            return "errorMainPage";
 //        }
         List<User> otherUsers = userService.getOtherUsers(username);
-        Map<Long, String> profilePhotos = new HashMap<>();
 
+        Map<Long, Long> profileFirstPhotoIds = new HashMap<>();
         for (User user : otherUsers) {
-            if (user.getPhotos().isEmpty()) {
-                profilePhotos.put(user.getId(), "");
-                continue;
-            }
-
-            Photo photo = user.getPhotos().get(0);
-
-            if (photo.getBytes() != null && photo.getBytes().length > 0) {
-                String base64Image = Base64.getEncoder().encodeToString(photo.getBytes());
-                profilePhotos.put(user.getId(), base64Image);
-            } else {
-                profilePhotos.put(user.getId(), "");
+            if (user.getPhotos() != null && !user.getPhotos().isEmpty()) {
+                Photo firstPhoto = user.getPhotos().get(0);
+                profileFirstPhotoIds.put(user.getId(), firstPhoto.getId());
             }
         }
 
-        model.addAttribute("profilePhotos", profilePhotos);
         model.addAttribute("profiles", otherUsers);
         model.addAttribute("currentUsername", username);
+        model.addAttribute("profileFirstPhotoIds", profileFirstPhotoIds);
         return "main";
     }
 
