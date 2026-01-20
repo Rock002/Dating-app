@@ -1,40 +1,418 @@
 <!DOCTYPE html>
 <html lang="ru" xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{layouts/base}">
+      layout:decorate="~{base}">
 <head>
   <title>Мэтчи</title>
 
   <th:block layout:fragment="styles">
     <style>
-      .page-title {
-          margin-bottom: 20px;
-          font-size: 24px;
+      /* Контейнер для страницы */
+      .matches-container {
+          max-width: 800px;
+          margin: 0 auto;
       }
 
+      /* Заголовок */
+      .page-title {
+          font-size: 28px;
+          margin-bottom: 10px;
+          color: #333;
+      }
+
+      .page-subtitle {
+          color: #666;
+          margin-bottom: 30px;
+          font-size: 16px;
+      }
+
+      /* Список мэтчей */
+      .matches-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+      }
+
+      /* Карточка мэтча */
+      .match-card {
+          background: white;
+          border: 1px solid #e0e0e0;
+          border-radius: 10px;
+          padding: 20px;
+          display: flex;
+          align-items: center;
+          gap: 20px;
+          transition: transform 0.2s, box-shadow 0.2s;
+      }
+
+      .match-card:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      }
+
+      /* Аватар в мэтче */
+      .match-avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          object-fit: cover;
+          background: #f5f5f5;
+          flex-shrink: 0;
+      }
+
+      .no-avatar {
+          width: 80px;
+          height: 80px;
+          border-radius: 50%;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          color: white;
+          font-size: 28px;
+          flex-shrink: 0;
+      }
+
+      /* Информация о мэтче */
+      .match-info {
+          flex: 1;
+      }
+
+      .match-username {
+          font-size: 20px;
+          font-weight: 600;
+          margin-bottom: 5px;
+          color: #333;
+      }
+
+      .match-details {
+          color: #666;
+          font-size: 14px;
+          margin-bottom: 10px;
+          display: flex;
+          flex-wrap: wrap;
+          gap: 15px;
+      }
+
+      .match-details span {
+          display: inline-flex;
+          align-items: center;
+          gap: 5px;
+      }
+
+      .match-bio {
+          color: #777;
+          font-size: 14px;
+          line-height: 1.4;
+          margin-top: 5px;
+      }
+
+      .match-date {
+          color: #999;
+          font-size: 12px;
+          margin-top: 5px;
+      }
+
+      /* Кнопки действий */
+      .match-actions {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          min-width: 150px;
+      }
+
+      .action-btn {
+          padding: 10px 15px;
+          border: none;
+          border-radius: 6px;
+          font-size: 14px;
+          cursor: pointer;
+          transition: all 0.2s;
+          text-align: center;
+          text-decoration: none;
+          display: block;
+      }
+
+      .chat-btn {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+      }
+
+      .chat-btn:hover {
+          background: linear-gradient(135deg, #5a6fd8 0%, #6a4090 100%);
+          transform: translateY(-1px);
+          box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+      }
+
+      .unmatch-btn {
+          background: #f8f9fa;
+          color: #666;
+          border: 1px solid #e0e0e0;
+      }
+
+      .unmatch-btn:hover {
+          background: #e9ecef;
+          color: #333;
+      }
+
+      /* Если мэтчей нет */
       .empty-state {
           text-align: center;
           padding: 60px 20px;
-          color: #666;
+          background: white;
+          border-radius: 10px;
+          border: 1px solid #e0e0e0;
+          margin-top: 20px;
       }
 
       .empty-icon {
-          font-size: 48px;
+          font-size: 64px;
           margin-bottom: 20px;
           opacity: 0.3;
+      }
+
+      .empty-title {
+          font-size: 22px;
+          color: #333;
+          margin-bottom: 10px;
+      }
+
+      .empty-description {
+          color: #666;
+          margin-bottom: 30px;
+          max-width: 400px;
+          margin-left: auto;
+          margin-right: auto;
+          line-height: 1.5;
+      }
+
+      .action-link {
+          display: inline-block;
+          background: #333;
+          color: white;
+          padding: 12px 30px;
+          border-radius: 6px;
+          text-decoration: none;
+          font-size: 16px;
+      }
+
+      .action-link:hover {
+          background: #444;
+      }
+
+      /* Счетчик мэтчей */
+      .matches-count {
+          display: inline-block;
+          background: #e91e63;
+          color: white;
+          padding: 2px 8px;
+          border-radius: 12px;
+          font-size: 14px;
+          margin-left: 10px;
+          vertical-align: middle;
+      }
+
+      /* Адаптивность */
+      @media (max-width: 768px) {
+          .match-card {
+              flex-direction: column;
+              text-align: center;
+              padding: 15px;
+          }
+
+          .match-info {
+              text-align: center;
+          }
+
+          .match-details {
+              justify-content: center;
+          }
+
+          .match-actions {
+              width: 100%;
+              margin-top: 15px;
+          }
+
+          .action-btn {
+              width: 100%;
+          }
       }
     </style>
   </th:block>
 </head>
 <body>
 <th:block layout:fragment="content">
-  <h1 class="page-title">Мэтчи</h1>
+  <div class="matches-container">
+    <!-- Заголовок -->
+    <h1 class="page-title">
+      Ваши мэтчи
+      <span class="matches-count" th:text="${matches != null ? matches.size() : 0}">0</span>
+    </h1>
+    <p class="page-subtitle">Люди, с которыми у вас взаимная симпатия 💕</p>
 
-  <div class="empty-state">
-    <div class="empty-icon">🤝</div>
-    <h3>Пока нет мэтчей</h3>
-    <p>Когда у вас появятся взаимные симпатии, они отобразятся здесь</p>
+    <!-- Список мэтчей -->
+    <div th:if="${matches != null && !matches.isEmpty()}">
+      <div class="matches-list">
+        <div class="match-card" th:each="match : ${matches}">
+          <!-- Определяем второго пользователя в мэтче -->
+          <div th:with="otherUser=${matchService.getOtherUserInMatch(match, currentUser)}">
+
+            <!-- Аватар пользователя -->
+            <div th:if="${otherUser.photos != null && !otherUser.photos.isEmpty()}">
+              <img th:src="@{/photos/{id}(id=${otherUser.photos[0].id})}"
+                   th:alt="${otherUser.username}"
+                   class="match-avatar">
+            </div>
+            <div th:unless="${otherUser.photos != null && !otherUser.photos.isEmpty()}">
+              <div class="no-avatar">
+                <span th:text="${otherUser.username.substring(0, 1).toUpperCase()}"></span>
+              </div>
+            </div>
+
+            <!-- Информация о пользователе -->
+            <div class="match-info">
+              <div class="match-username" th:text="${otherUser.username}"></div>
+
+              <div class="match-details">
+                                    <span th:if="${otherUser.userProfile != null && otherUser.userProfile.sex != null}">
+                                        <span th:text="${otherUser.userProfile.sex == 'M' ? '♂ Мужчина' : '♀ Женщина'}"></span>
+                                    </span>
+
+                <span th:if="${otherUser.userProfile != null && otherUser.userProfile.birthDate != null}">
+                                        <span th:text="${#temporals.year(#temporals.createNow()) - #temporals.year(otherUser.userProfile.birthDate)}"></span> лет
+                                    </span>
+
+                <span th:if="${otherUser.userProfile != null && otherUser.userProfile.location != null}">
+                                        📍 <span th:text="${otherUser.userProfile.location}"></span>
+                                    </span>
+              </div>
+
+              <div class="match-bio" th:if="${otherUser.userProfile != null && otherUser.userProfile.info != null}"
+                   th:text="${otherUser.userProfile.info}">
+              </div>
+
+              <div class="match-date">
+                Мэтч создан:
+                <span th:text="${#temporals.format(match.createdAt, 'dd.MM.yyyy HH:mm')}"></span>
+              </div>
+            </div>
+
+            <!-- Кнопки действий -->
+            <div class="match-actions">
+              <!-- Кнопка чата (пока заглушка) -->
+              <a th:href="@{/chats/{id}(id=${otherUser.id})}" class="action-btn chat-btn">
+                💬 Написать сообщение
+              </a>
+
+              <!-- Кнопка удаления мэтча -->
+              <button class="action-btn unmatch-btn"
+                      th:onclick="'unmatch(' + ${match.id} + ')'">
+                ✕ Удалить мэтч
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Если мэтчей нет -->
+    <div th:if="${matches == null || matches.isEmpty()}" class="empty-state">
+      <div class="empty-icon">🤝</div>
+      <h2 class="empty-title">Пока нет мэтчей</h2>
+      <p class="empty-description">
+        Мэтчи появятся здесь, когда вы и другой пользователь поставите друг другу лайки.
+        Начните знакомиться прямо сейчас!
+      </p>
+      <a th:href="@{/}" class="action-link">Найти анкеты →</a>
+    </div>
   </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+  <script>
+    // Функция удаления мэтча
+    function unmatch(matchId) {
+        if (confirm('Вы уверены, что хотите удалить этот мэтч?')) {
+            fetch('/matches/' + matchId, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Если используете CSRF, добавьте токен
+                    // 'X-CSRF-TOKEN': document.querySelector('meta[name="_csrf"]').getAttribute('content')
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Находим карточку мэтча
+                    const card = document.querySelector(`[data-match-id="${matchId}"]`);
+                    if (card) {
+                        card.style.opacity = '0.5';
+                        setTimeout(() => card.remove(), 300);
+                    }
+                    showNotification('Мэтч удален');
+                    updateMatchesCount();
+                } else {
+                    response.text().then(error => {
+                        showNotification('Ошибка: ' + error);
+                    });
+                }
+            }).catch(error => {
+                console.error('Error:', error);
+                showNotification('Ошибка при удалении мэтча');
+            });
+        }
+    }
+
+    // Функция уведомления
+    function showNotification(message) {
+        // Создаем элемент уведомления
+        const notification = document.createElement('div');
+        notification.style.cssText = `
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #333;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 4px;
+            z-index: 10000;
+            font-size: 14px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        `;
+        notification.textContent = message;
+        document.body.appendChild(notification);
+
+        // Удаляем через 3 секунды
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            notification.style.transition = 'opacity 0.3s';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // Обновление счетчика мэтчей
+    function updateMatchesCount() {
+        const matchesList = document.querySelector('.matches-list');
+        const countElement = document.querySelector('.matches-count');
+        if (matchesList && countElement) {
+            const matchCards = matchesList.querySelectorAll('.match-card');
+            countElement.textContent = matchCards.length;
+        }
+    }
+
+    // Добавляем data-атрибуты для карточек мэтчей
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.match-card');
+        cards.forEach((card, index) => {
+            // Получаем ID мэтча из кнопки удаления
+            const unmatchBtn = card.querySelector('.unmatch-btn');
+            if (unmatchBtn) {
+                const onclickAttr = unmatchBtn.getAttribute('onclick');
+                const matchId = onclickAttr.match(/unmatch\((\d+)\)/)[1];
+                card.setAttribute('data-match-id', matchId);
+            }
+        });
+    });
+  </script>
 </th:block>
 </body>
 </html>
