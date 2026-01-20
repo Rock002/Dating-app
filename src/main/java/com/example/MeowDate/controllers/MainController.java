@@ -1,10 +1,8 @@
 package com.example.MeowDate.controllers;
 
-import com.example.MeowDate.models.Like;
-import com.example.MeowDate.models.Photo;
-import com.example.MeowDate.models.User;
-import com.example.MeowDate.models.UserProfile;
+import com.example.MeowDate.models.*;
 import com.example.MeowDate.services.LikeService;
+import com.example.MeowDate.services.MatchService;
 import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserService;
 import org.springframework.security.core.Authentication;
@@ -20,11 +18,13 @@ public class MainController {
     private final UserService userService;
     private final LikeService likeService;
     private final PhotoService photoService;
+    private final MatchService matchService;
 
-    public MainController(UserService userService, LikeService likeService, PhotoService photoService) {
+    public MainController(UserService userService, LikeService likeService, PhotoService photoService, MatchService matchService) {
         this.userService = userService;
         this.likeService = likeService;
         this.photoService = photoService;
+        this.matchService = matchService;
     }
 
     @GetMapping("/")
@@ -65,7 +65,16 @@ public class MainController {
     }
 
     @GetMapping("/matches")
-    public String matchesPage() {
+    public String matchesPage(Authentication authentication, Model model) {
+        String currentUsername = authentication.getName();
+        User currentUser = userService.findByUsername(currentUsername);
+
+        List<Match> matches = matchService.getUserMatches(currentUser);
+
+        model.addAttribute("matches", matches);
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("matchService", matchService);
+
         return "matches";
     }
 

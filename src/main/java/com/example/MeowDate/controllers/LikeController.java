@@ -1,13 +1,17 @@
 package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Like;
+import com.example.MeowDate.models.Match;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.services.LikeService;
+import com.example.MeowDate.services.MatchService;
 import com.example.MeowDate.services.UserService;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 
 @Controller
@@ -15,10 +19,12 @@ public class LikeController {
 
     private final LikeService likeService;
     private final UserService userService;
+    private final MatchService matchService;
 
-    public LikeController(LikeService likeService, UserService userService) {
+    public LikeController(LikeService likeService, UserService userService, MatchService matchService) {
         this.likeService = likeService;
         this.userService = userService;
+        this.matchService = matchService;
     }
 
     @PostMapping("/like/{id}")
@@ -27,11 +33,25 @@ public class LikeController {
         User sender = userService.findByUsername(senderUsername);
         User receiver = userService.findById(id);
 
-        Like like = new Like(
+        // TODO: добавить удаление лайков при создании мэтча с обеих сторон
+
+        List<Like> likesWithMaybeMutually = likeService.findByReceiver(sender);
+
+        for (Like like : likesWithMaybeMutually) {
+            if (like.getSender().getId().equals(receiver.getId())) {
+                Match match = matchService.createMatch(sender, receiver);
+                matchService.save(match);
+
+                return "redirect:/";
+            }
+        }
+
+        // проверить существование лайка
+        Like currentLike = new Like(
                 sender,
                 receiver
         );
-        likeService.save(like);
+        likeService.save(currentLike);
 
         return "redirect:/";
     }
