@@ -21,12 +21,14 @@ public class MatchService {
         matchRepository.save(match);
     }
 
-    public Match createMatch(User user1, User user2) {
-        // добавить проверку на существование
-        // двух одинаковых мэтчей не должно быть
-        return new Match(user1, user2);
+    public void createAndSaveMatch(User user1, User user2) {
+        if (!isMatch(user1, user2)) {
+            Match newMatch = new Match(user1, user2);
+            matchRepository.save(newMatch);
+        }
     }
 
+    @Transactional
     public List<Match> getUserMatches(User user) {
         return matchRepository.findAllByUser(user);
     }

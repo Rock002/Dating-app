@@ -39,19 +39,14 @@ public class LikeController {
 
         for (Like like : likesWithMaybeMutually) {
             if (like.getSender().getId().equals(receiver.getId())) {
-                Match match = matchService.createMatch(sender, receiver);
-                matchService.save(match);
+                matchService.createAndSaveMatch(sender, receiver);
+                likeService.delete(like);
 
                 return "redirect:/";
             }
         }
 
-        // проверить существование лайка
-        Like currentLike = new Like(
-                sender,
-                receiver
-        );
-        likeService.save(currentLike);
+        likeService.createAndSaveLike(sender, receiver);
 
         return "redirect:/";
     }

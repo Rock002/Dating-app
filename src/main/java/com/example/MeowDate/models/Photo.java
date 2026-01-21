@@ -20,7 +20,7 @@ public class Photo {
 
     @Column(name = "bytes")
     @Lob
-    @Basic(fetch = FetchType.LAZY)
+    @Basic(fetch = FetchType.EAGER)
     private byte[] bytes;
 
     @ManyToOne(fetch = FetchType.EAGER)
