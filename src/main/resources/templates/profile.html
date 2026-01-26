@@ -8,12 +8,21 @@
     <th:block layout:fragment="styles">
         <style>
             .profile-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
                 margin-bottom: 30px;
+                position: relative;
+            }
+
+            .profile-info-section {
+                flex: 1;
             }
 
             .profile-name {
                 font-size: 28px;
                 margin-bottom: 10px;
+                color: #333;
             }
 
             .profile-details {
@@ -25,6 +34,98 @@
             .profile-details span {
                 display: inline-block;
                 margin-right: 15px;
+            }
+
+            /* Стили для кнопки настроек */
+            .profile-settings {
+                position: relative;
+            }
+
+            .settings-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                padding: 8px;
+                border-radius: 50%;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: background-color 0.2s;
+            }
+
+            .settings-btn:hover {
+                background-color: #f0f0f0;
+            }
+
+            .settings-btn svg {
+                width: 20px;
+                height: 20px;
+                fill: #666;
+            }
+
+            /* Выпадающее меню */
+            .settings-dropdown {
+                position: absolute;
+                top: 45px;
+                right: 0;
+                background: white;
+                border: 1px solid #e0e0e0;
+                border-radius: 8px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                min-width: 200px;
+                z-index: 1000;
+                opacity: 0;
+                visibility: hidden;
+                transform: translateY(-10px);
+                transition: all 0.3s ease;
+            }
+
+            .settings-dropdown.show {
+                opacity: 1;
+                visibility: visible;
+                transform: translateY(0);
+            }
+
+            .dropdown-item {
+                padding: 12px 16px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                text-decoration: none;
+                color: #333;
+                border: none;
+                background: none;
+                width: 100%;
+                text-align: left;
+                cursor: pointer;
+                transition: background-color 0.2s;
+                font-size: 14px;
+            }
+
+            .dropdown-item:hover {
+                background-color: #f5f5f5;
+            }
+
+            .dropdown-item svg {
+                width: 16px;
+                height: 16px;
+                fill: #666;
+            }
+
+            .dropdown-divider {
+                height: 1px;
+                background-color: #e0e0e0;
+                margin: 4px 0;
+            }
+
+            .dropdown-item.delete {
+                color: #e74c3c;
+            }
+
+            .dropdown-item.delete svg {
+                fill: #e74c3c;
             }
 
             .photos-section {
@@ -82,30 +183,76 @@
 <body>
 <th:block layout:fragment="content">
     <div class="profile-header">
-        <h1 class="profile-name" th:text="${user.username}"></h1>
+        <div class="profile-info-section">
+            <h1 class="profile-name" th:text="${user.username}"></h1>
 
-        <div class="profile-details">
+            <div class="profile-details">
                 <span th:if="${user.userProfile != null && user.userProfile.sex != null}">
                     <strong>Пол:</strong>
                     <span th:text="${user.userProfile.sex}"></span>
                 </span>
 
-            <span th:if="${user.userProfile != null && user.userProfile.birthDate != null}">
+                <span th:if="${user.userProfile != null && user.userProfile.birthDate != null}">
                     <strong>Дата рождения:</strong>
                     <span th:text="${user.userProfile.birthDate}"></span>
                 </span>
 
-            <span th:if="${user.userProfile != null && user.userProfile.location != null}">
+                <span th:if="${user.userProfile != null && user.userProfile.location != null}">
                     <strong>Место:</strong>
                     <span th:text="${user.userProfile.location}"></span>
                 </span>
+            </div>
+
+            <a th:href="@{/profile/edit}" class="edit-btn">Редактировать профиль</a>
         </div>
 
-        <a th:href="@{/profile/edit}" class="edit-btn">Редактировать профиль</a>
+        <!-- Кнопка настроек -->
+        <div class="profile-settings">
+            <button class="settings-btn" id="settingsBtn">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </button>
+
+            <!-- Выпадающее меню -->
+            <div class="settings-dropdown" id="settingsDropdown">
+                <a th:href="@{/profile/change}" class="dropdown-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+                    </svg>
+                    <span>Изменить Аккаунт</span>
+                </a>
+
+                <button class="dropdown-item">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z"/>
+                    </svg>
+                    <span>Настройки</span>
+                </button>
+
+                <div class="dropdown-divider"></div>
+
+                <form th:action="@{/logout}" method="post" style="width: 100%;">
+                    <button type="submit" class="dropdown-item">
+                        <svg viewBox="0 0 24 24">
+                            <path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/>
+                        </svg>
+                        <span>Выйти из аккаунта</span>
+                    </button>
+                </form>
+
+                <button class="dropdown-item delete" onclick="showDeleteConfirm()">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    </svg>
+                    <span>Удалить Аккаунт</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <!-- Биография -->
-    <div th:if="${user.userProfile != null && user.userProfile.info != null}">
+    <div th:if="${user.userProfile != null && user.userProfile.info != null}" style="margin-top: 20px;">
         <h3>О себе</h3>
         <p th:text="${user.userProfile.info}" style="line-height: 1.6; color: #555;"></p>
     </div>
@@ -135,6 +282,53 @@
             </a>
         </div>
     </div>
+</th:block>
+
+<th:block layout:fragment="scripts">
+    <script>
+        // Управление выпадающим меню
+        document.addEventListener('DOMContentLoaded', function() {
+            const settingsBtn = document.getElementById('settingsBtn');
+            const settingsDropdown = document.getElementById('settingsDropdown');
+
+            // Открытие/закрытие меню при клике на кнопку
+            settingsBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                settingsDropdown.classList.toggle('show');
+            });
+
+            // Закрытие меню при клике вне его
+            document.addEventListener('click', function() {
+                settingsDropdown.classList.remove('show');
+            });
+
+            // Предотвращаем закрытие при клике внутри меню
+            settingsDropdown.addEventListener('click', function(e) {
+                e.stopPropagation();
+            });
+        });
+
+        // Подтверждение удаления аккаунта
+        function showDeleteConfirm() {
+            if (confirm('Вы уверены, что хотите удалить аккаунт? Это действие невозможно отменить.')) {
+                // Здесь будет запрос на удаление аккаунта
+                // fetch('/api/account/delete', { method: 'DELETE' })
+                //     .then(response => {
+                //         if (response.ok) {
+                //             window.location.href = '/login';
+                //         }
+                //     });
+                alert('Функция удаления аккаунта будет реализована в бэкенде');
+            }
+        }
+
+        // Закрытие меню при нажатии Esc
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('settingsDropdown').classList.remove('show');
+            }
+        });
+    </script>
 </th:block>
 </body>
 </html>

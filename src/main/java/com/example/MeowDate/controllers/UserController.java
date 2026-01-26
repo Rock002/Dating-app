@@ -73,6 +73,11 @@ public class UserController {
         return "redirect:/login";
     }
 
+    @GetMapping("/profile/error-password-change")
+    public String errorPasswordChange() {
+        return "errorPasswordChange";
+    }
+
     @GetMapping("/profile/edit")
     public String profileEdit(Authentication authentication, Model model) {
         String username = authentication.getName();
@@ -80,6 +85,56 @@ public class UserController {
 
         model.addAttribute("user", currentUser);
         return "profileEdit";
+    }
+
+    @GetMapping("/profile/change")
+    public String changeProfile(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        User currentUser = userService.findByUsername(username);
+        model.addAttribute("user", currentUser);
+
+        return "profileChange";
+    }
+
+    @GetMapping("/profile/change-password")
+    public String changePassword(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        User currentUser = userService.findByUsername(username);
+        model.addAttribute("user", currentUser);
+
+        return "passwordChangeForm";
+    }
+
+    @PostMapping("/profile/post-change")
+    public String postChangeProfile(@RequestParam("username") String username,
+                                    @RequestParam("email") String email,
+                                    Authentication authentication) {
+        String currentUsername = authentication.getName();
+        User user = userService.findByUsername(currentUsername);
+
+        user.setUsername(username);
+        user.setEmail(email);
+        userService.update(user);
+
+        return "redirect:/profile";
+    }
+
+    @PostMapping("/profile/post-change-password")
+    public String postChangePassword(@RequestParam("oldPassword") String oldPassword,
+                                    @RequestParam("newPassword") String newPassword,
+                                    Authentication authentication) {
+        String currentUsername = authentication.getName();
+        User user = userService.findByUsername(currentUsername);
+
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userService.update(user);
+
+            return "redirect:/profile";
+        } else {
+            return "redirect:/profile/error-password-change";
+        }
+
     }
 
     @PostMapping("/profile/update-info")
@@ -106,7 +161,7 @@ public class UserController {
         userProfile.setLocation(location);
         userProfile.setInfo(info);
 
-        userService.update(userProfile);
+        userProfileService.update(userProfile);
         return "redirect:/profile";
     }
 }

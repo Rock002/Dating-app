@@ -106,82 +106,36 @@
 <th:block layout:fragment="content">
     <div class="edit-container">
         <div class="edit-header">
-            <h1>Заполните профиль</h1>
-            <p>Для использования приложения необходимо заполнить эти поля</p>
+            <h1>Данные профиля</h1>
         </div>
 
-        <form th:action="@{/profile/update-info}" method="post" class="edit-form">
+        <form th:action="@{/profile/post-change}" method="post" class="edit-form">
             <!-- Имя -->
             <div class="form-group">
-                <label class="form-label required">Имя</label>
+                <label class="form-label required">Username</label>
                 <input type="text"
-                       name="firstName"
+                       name="username"
                        class="form-control"
-                       th:value="${user.userProfile != null ? user.userProfile.firstName : ''}"
+                       th:value="${user.username}"
                        required>
-                <div class="form-hint">Ваше настоящее имя</div>
+                <div class="form-hint">Имя профиля</div>
             </div>
 
-            <!-- Пол -->
+            <!-- Почта -->
             <div class="form-group">
-                <label class="form-label required">Пол</label>
-                <div class="radio-group">
-                    <label class="radio-option">
-                        <input type="radio"
-                               name="sex"
-                               value="M"
-                               th:checked="${user.userProfile != null && user.userProfile.sex == 'M'}"
-                                required>
-                        Мужской
-                    </label>
-                    <label class="radio-option">
-                        <input type="radio"
-                               name="sex"
-                               value="F"
-                               th:checked="${user.userProfile != null && user.userProfile.sex == 'F'}"
-                                required>
-                        Женский
-                    </label>
-                </div>
-            </div>
-
-            <!-- Дата рождения -->
-            <div class="form-group">
-                <label class="form-label required">Дата рождения</label>
-                <input type="date"
-                       name="birthDate"
+                <label class="form-label required">Email</label>
+                <input type="email"
+                       name="email"
                        class="form-control"
-                       th:value="${user.userProfile != null ? user.userProfile.birthDate : ''}"
+                       th:value="${user.email}"
                        required>
-                <div class="form-hint">Вы должны быть старше 18 лет</div>
-            </div>
-
-            <!-- Место обитания -->
-            <div class="form-group">
-                <label class="form-label required">Место обитания</label>
-                <input type="text"
-                       name="location"
-                       class="form-control"
-                       th:value="${user.userProfile != null ? user.userProfile.location : ''}"
-                       placeholder="Например: Москва, Россия"
-                       required>
-                <div class="form-hint">Город или регион проживания</div>
-            </div>
-
-            <!-- Информация о себе (необязательно) -->
-            <div class="form-group">
-                <label class="form-label">О себе</label>
-                <textarea name="info"
-                          class="form-control"
-                          rows="4"
-                          th:text="${user.userProfile != null ? user.userProfile.info : ''}"
-                          placeholder="Расскажите о себе, своих интересах..."></textarea>
-                <div class="form-hint">Это поле можно заполнить позже</div>
+                <div class="form-hint">Электронная почта</div>
             </div>
 
             <!-- Кнопки -->
             <div class="form-actions">
                 <button type="submit" class="btn-submit">Сохранить</button>
+                <a th:href="@{/profile/change-password}" class="btn-cancel">Сменить пароль</a>
                 <a th:href="@{/profile}" class="btn-cancel">Отмена</a>
             </div>
         </form>

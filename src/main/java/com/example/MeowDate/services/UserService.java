@@ -58,14 +58,12 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public void update(UserProfile userProfile) {
-        userProfileRepository.update(
-                userProfile.getUser(),
-                userProfile.getFirstName(),
-                userProfile.getBirthDate(),
-                userProfile.getSex(),
-                userProfile.getLocation(),
-                userProfile.getInfo()
+    public void update(User user) {
+        userRepository.update(
+                user.getId(),
+                user.getUsername(),
+                user.getPassword(),
+                user.getEmail()
         );
     }
 }
