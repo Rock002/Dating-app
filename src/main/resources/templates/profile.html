@@ -267,7 +267,7 @@
         <div th:if="${photos != null && !photos.isEmpty()}">
             <div class="photos-grid">
                 <div th:each="photo : ${photos}">
-                    <img th:src="@{/{id}(id=${photo.id})}"
+                    <img th:src="@{/images/{id}(id=${photo.id})}"
                          th:alt="${photo.originFileName}"
                          class="photo-item">
                 </div>

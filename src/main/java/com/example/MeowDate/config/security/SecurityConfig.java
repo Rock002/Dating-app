@@ -26,7 +26,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registration", "/postregistration", "/ws/**", "/ws").permitAll()
+                        .requestMatchers("/login", "/registration", "/postregistration").permitAll()
+                        .requestMatchers("/ws/**", "/ws", "/ws/*").permitAll()
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

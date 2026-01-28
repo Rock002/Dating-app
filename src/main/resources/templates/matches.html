@@ -259,7 +259,7 @@
 
             <!-- Аватар пользователя -->
             <div th:if="${otherUser.photos != null && !otherUser.photos.isEmpty()}">
-              <img th:src="@{/{id}(id=${otherUser.photos[0].id})}"
+              <img th:src="@{/images/{id}(id=${otherUser.photos[0].id})}"
                    th:alt="${otherUser.username}"
                    class="match-avatar">
             </div>

@@ -13,8 +13,8 @@ public class ChatMessage {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-    @Column(name = "senderID")
-    private Long senderID;
+    @Column(name = "senderId")
+    private Long senderId;
     @Column(name = "receiverId")
     private Long receiverId;
     @Column(name = "senderName")
@@ -32,8 +32,8 @@ public class ChatMessage {
         return id;
     }
 
-    public Long getSenderID() {
-        return senderID;
+    public Long getSenderId() {
+        return senderId;
     }
 
     public Long getReceiverId() {
@@ -52,8 +52,8 @@ public class ChatMessage {
         return timestamp;
     }
 
-    public void setSenderID(Long senderID) {
-        this.senderID = senderID;
+    public void setSenderID(Long senderId) {
+        this.senderId = senderId;
     }
 
     public void setReceiverId(Long receiverId) {

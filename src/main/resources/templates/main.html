@@ -122,7 +122,7 @@
             <div class="profile-card" th:each="profile : ${profiles}">
                 <!-- Фото пользователя -->
                 <div th:if="${profileFirstPhotoIds != null && profileFirstPhotoIds.containsKey(profile.id)}">
-                    <img th:src="@{/{id}(id=${profileFirstPhotoIds.get(profile.id)})}"
+                    <img th:src="@{/images/{id}(id=${profileFirstPhotoIds.get(profile.id)})}"
                          alt="Фото"
                          class="profile-photo">
                 </div>
