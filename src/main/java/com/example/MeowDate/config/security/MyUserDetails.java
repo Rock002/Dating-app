@@ -1,4 +1,4 @@
-package com.example.MeowDate.config;
+package com.example.MeowDate.config.security;
 
 import com.example.MeowDate.models.User;
 import org.jspecify.annotations.Nullable;

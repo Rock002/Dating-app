@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Чат</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #fafafa;
+        }
+
+        .chat-header {
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px 8px 0 0;
+            border: 1px solid #e0e0e0;
+            border-bottom: none;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-container {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 0 0 8px 8px;
+            height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .messages-container {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            word-wrap: break-word;
+            position: relative;
+        }
+
+        .message.sent {
+            background: #007bff;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.received {
+            background: #f1f0f0;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-content {
+            margin-bottom: 5px;
+        }
+
+        .message-time {
+            font-size: 12px;
+            opacity: 0.8;
+            text-align: right;
+        }
+
+        .input-container {
+            padding: 15px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #007bff;
+        }
+
+        .send-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .send-btn:hover {
+            background: #0056b3;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .connected {
+            color: #28a745;
+        }
+
+        .disconnected {
+            color: #dc3545;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="chat-header">
+    <a th:href="@{/matches}" class="back-btn">←</a>
+    <div class="user-avatar">
+        <span th:text="${otherUsername != null ? otherUsername.substring(0, 1).toUpperCase() : '?'}"></span>
+    </div>
+    <div>
+        <h3 style="margin: 0;" th:text="${otherUsername}">Собеседник</h3>
+        <div class="status" id="connectionStatus">
+            <span id="statusText">❌ Не подключено</span>
+        </div>
+    </div>
+</div>
+
+<div class="chat-container">
+    <div class="messages-container" id="messagesContainer">
+        <!-- Сообщения будут появляться здесь -->
+    </div>
+
+    <div class="input-container">
+        <input type="text"
+               class="message-input"
+               id="messageInput"
+               placeholder="Введите сообщение..."
+               th:attr="data-receiver-id=${otherUserId}">
+        <button class="send-btn" onclick="sendMessage()">➤</button>
+    </div>
+</div>
+
+<!-- WebSocket библиотеки -->
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.6.1/dist/sockjs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    let stompClient = null;
+    const currentUserId = /*[[${currentUserId}]]*/ null;
+    const currentUsername = /*[[${currentUsername}]]*/ 'Вы';
+    const otherUserId = /*[[${otherUserId}]]*/ null;
+    const otherUsername = /*[[${otherUsername}]]*/ 'Собеседник';
+    /*]]>*/
+</script>
+
+<script>
+    // Подключение к WebSocket
+    function connect() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, function(frame) {
+            console.log('Подключено к WebSocket:', frame);
+
+            // Обновляем статус
+            document.getElementById('statusText').textContent = '✅ Подключено';
+            document.getElementById('connectionStatus').className = 'status connected';
+
+            // Подписываемся на приватные сообщения
+            stompClient.subscribe('/user/queue/messages', function(message) {
+                const msg = JSON.parse(message.body);
+                displayMessage(msg);
+            });
+
+            // Загружаем историю сообщений (опционально)
+            // loadMessageHistory();
+
+        }, function(error) {
+            console.error('Ошибка подключения:', error);
+            document.getElementById('statusText').textContent = '❌ Ошибка подключения';
+            document.getElementById('connectionStatus').className = 'status disconnected';
+
+            // Пытаемся переподключиться через 5 секунд
+            setTimeout(connect, 5000);
+        });
+    }
+
+    // Отправка сообщения
+    function sendMessage() {
+        if (!stompClient || !stompClient.connected) {
+            alert('Сначала подключитесь к чату!');
+            return;
+        }
+
+        const input = document.getElementById('messageInput');
+        const content = input.value.trim();
+        const receiverId = input.getAttribute('data-receiver-id');
+
+        if (!content) {
+            return;
+        }
+
+        const message = {
+            senderId: currentUserId,
+            receiverId: parseInt(receiverId),
+            content: content,
+            senderName: currentUsername,
+            timestamp: new Date().toISOString()
+        };
+
+        // Отправляем сообщение на сервер
+        stompClient.send('/app/chat.send', {}, JSON.stringify(message));
+
+        // Очищаем поле ввода
+        input.value = '';
+
+        // Фокус на поле ввода
+        input.focus();
+    }
+
+    // Отображение сообщения
+    function displayMessage(message) {
+        const messagesContainer = document.getElementById('messagesContainer');
+        const messageDiv = document.createElement('div');
+
+        // Определяем, является ли сообщение нашим
+        const isSent = message.senderId == currentUserId;
+
+        messageDiv.className = `message ${isSent ? 'sent' : 'received'}`;
+
+        const time = new Date(message.timestamp).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+
+        messageDiv.innerHTML = `
+            <div class="message-content">${message.content}</div>
+            <div class="message-time">${time}</div>
+        `;
+
+        messagesContainer.appendChild(messageDiv);
+
+        // Прокручиваем вниз
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+
+    // Отправка сообщения по нажатию Enter
+    document.getElementById('messageInput').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+            sendMessage();
+        }
+    });
+
+    // Подключаемся при загрузке страницы
+    document.addEventListener('DOMContentLoaded', function() {
+        connect();
+
+        // Фокус на поле ввода
+        document.getElementById('messageInput').focus();
+    });
+
+    // Обработка закрытия страницы
+    window.addEventListener('beforeunload', function() {
+        if (stompClient) {
+            stompClient.disconnect();
+        }
+    });
+</script>
+</body>
+</html>

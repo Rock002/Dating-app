@@ -1,8 +1,7 @@
 package com.example.MeowDate.services;
 
-import com.example.MeowDate.config.MyUserDetails;
+import com.example.MeowDate.config.security.MyUserDetails;
 import com.example.MeowDate.models.User;
-import com.example.MeowDate.models.UserProfile;
 import com.example.MeowDate.repository.UserProfileRepository;
 import com.example.MeowDate.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;

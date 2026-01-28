@@ -1,4 +1,4 @@
-package com.example.MeowDate.config;
+package com.example.MeowDate.config.security;
 
 import com.example.MeowDate.models.User;
 import org.jspecify.annotations.Nullable;
@@ -26,7 +26,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/registration", "/postregistration").permitAll()
+                        .requestMatchers("/login", "/registration", "/postregistration", "/ws/**", "/ws").permitAll()
                         .requestMatchers("/admin").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
