@@ -2,6 +2,7 @@ package com.example.MeowDate.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,6 +16,7 @@ public class UserProfile {
     private Long id;
 
     @NotNull
+    @Size(max = 100)
     @Column(name = "firstName")
     private String firstName;
 
@@ -27,6 +29,7 @@ public class UserProfile {
     @Column(name = "location")
     private String location;
 
+    @Size(max = 500)
     @Column(name = "info")
     private String info;
 

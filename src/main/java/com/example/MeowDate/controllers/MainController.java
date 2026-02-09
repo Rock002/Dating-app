@@ -10,7 +10,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class MainController {
@@ -33,11 +35,12 @@ public class MainController {
         User currentUser = userService.findByUsername(username);
         UserProfile userProfile = currentUser.getUserProfile();
 
-//        if (userProfile.getCoordinates() == null ||
-//                userProfile.getDateOfBirth() == null ||
-//                userProfile.getSex() == '\u0000') {
-//            return "errorMainPage";
-//        }
+        if (userProfile.getLocation() == null ||
+                userProfile.getBirthDate() == null ||
+                userProfile.getSex() == '\u0000') {
+            return "errorMainPage";
+        }
+
         List<User> otherUsers = userService.getOtherUsers(username);
 
         Map<Long, Long> profileFirstPhotoIds = new HashMap<>();

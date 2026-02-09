@@ -4,18 +4,17 @@ import com.example.MeowDate.models.ChatMessage;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.services.ChatMessageService;
 import com.example.MeowDate.services.UserService;
+import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
-import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -26,24 +25,15 @@ public class WebSocketChatController {
     private final UserService userService;
     private final SimpMessagingTemplate messagingTemplate;
     private final ChatMessageService chatMessageService;
-    private final ObjectMapper objectMapper;
 
     public WebSocketChatController(UserService userService, SimpMessagingTemplate messagingTemplate, ChatMessageService chatMessageService) {
         this.userService = userService;
         this.messagingTemplate = messagingTemplate;
         this.chatMessageService = chatMessageService;
-        this.objectMapper = new ObjectMapper();
     }
 
-
-//    @MessageMapping("/chat.test")
-//    @SendToUser("/queue/messages")
-//    public ChatMessage testMessage(@Payload ChatMessage message) {
-//        return message;
-//    }
-
     @MessageMapping("/chat.send")
-    public void sendMessage(@Payload ChatMessage message, Authentication authentication) {
+    public void sendMessage(@Payload @Valid ChatMessage message, Authentication authentication) {
 
         LOGGER.info("=== НАЧАЛО ОБРАБОТКИ СООБЩЕНИЯ ===");
         LOGGER.info("Message: {}", message);

@@ -1,7 +1,6 @@
 package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Like;
-import com.example.MeowDate.models.Match;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.services.LikeService;
 import com.example.MeowDate.services.MatchService;
@@ -32,8 +31,6 @@ public class LikeController {
         String senderUsername = authentication.getName();
         User sender = userService.findByUsername(senderUsername);
         User receiver = userService.findById(id);
-
-        // TODO: добавить удаление лайков при создании мэтча с обеих сторон
 
         List<Like> likesWithMaybeMutually = likeService.findByReceiver(sender);
 

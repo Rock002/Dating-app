@@ -1,11 +1,11 @@
 package com.example.MeowDate.controllers;
 
-import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.models.UserProfile;
 import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserProfileService;
 import com.example.MeowDate.services.UserService;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -55,7 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/postregistration")
-    public String postRegistration(User user) {
+    public String postRegistration(@Valid User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setRoles("USER");
 
@@ -138,7 +138,7 @@ public class UserController {
     }
 
     @PostMapping("/profile/update-info")
-    public String postProfileInfoEdit(@RequestParam("firstName") String firstName,
+    public String postProfileInfoEdit(@RequestParam("firstName") @Valid String firstName,
                                   @RequestParam("sex") char sex,
                                   @RequestParam("birthDate") LocalDate birthDate,
                                   @RequestParam("location") String location,

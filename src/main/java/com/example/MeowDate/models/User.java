@@ -3,6 +3,7 @@ package com.example.MeowDate.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -18,10 +19,12 @@ public class User {
     private Long id;
 
     @NotNull
+    @Size(max = 100)
     @Column(name = "username")
     private String username;
 
     @NotNull
+    @Size(max = 100)
     @Column(name = "password")
     private String password;
 
