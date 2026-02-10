@@ -1,7 +1,6 @@
 package com.example.MeowDate.models;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -28,11 +27,10 @@ public class User {
     @Column(name = "password")
     private String password;
 
-    @Email
+//    @Email
     @Column(name = "email")
     private String email;
 
-    @NotNull
     @Column(name = "roles")
     private String roles;
 
