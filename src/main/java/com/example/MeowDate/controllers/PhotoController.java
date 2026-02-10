@@ -4,6 +4,8 @@ import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,6 +23,7 @@ import java.util.List;
 public class PhotoController {
     private final PhotoService photoService;
     private final UserService userService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(PhotoController.class);
 
     public PhotoController(PhotoService photoService, UserService userService) {
         this.photoService = photoService;
@@ -40,6 +43,7 @@ public class PhotoController {
                                  ) throws IOException {
         String username = authentication.getName();
         User user = userService.findByUsername(username);
+        LOGGER.info("Пользователь {} найден", user.getUsername());
 
         Photo firstPhoto = new Photo(
                 firstFile.getOriginalFilename(),
@@ -69,6 +73,7 @@ public class PhotoController {
         user.setPhotos(photoList);
 
         photoService.savePhotos(photoList);
+        LOGGER.info("Фото сохранены в базе для пользователя {}", user.getUsername());
 
         return "redirect:/profile";
     }

@@ -21,7 +21,7 @@ public class LikeController {
     private final LikeService likeService;
     private final UserService userService;
     private final MatchService matchService;
-    private final static Logger LOGGER = LoggerFactory.getLogger(LikeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(LikeController.class);
 
     public LikeController(LikeService likeService, UserService userService, MatchService matchService) {
         this.likeService = likeService;
