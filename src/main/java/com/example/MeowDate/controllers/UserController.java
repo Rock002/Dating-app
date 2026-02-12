@@ -6,6 +6,8 @@ import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserProfileService;
 import com.example.MeowDate.services.UserService;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -24,6 +26,7 @@ public class UserController {
     private final PhotoService photoService;
     private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
 
     public UserController(UserService userService, PhotoService photoService, UserProfileService userProfileService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
@@ -60,6 +63,7 @@ public class UserController {
         user.setRoles("USER");
 
         userService.save(user);
+        LOGGER.info("Зарегестрирован пользователь {}", user.getUsername());
 
         UserProfile userProfile = new UserProfile();
         userProfile.setFirstName(user.getUsername());
@@ -69,12 +73,14 @@ public class UserController {
         user.setUserProfile(userProfile);
 
         userProfileService.save(userProfile);
+        LOGGER.info("Сохранена дополнительная информация о пользователе {}", user.getUsername());
 
         return "redirect:/login";
     }
 
     @GetMapping("/profile/error-password-change")
-    public String errorPasswordChange() {
+    public String errorPasswordChange(Authentication authentication) {
+        LOGGER.info("Ошибка при смена пароля для пользователя {}", authentication.getName());
         return "errorPasswordChange";
     }
 
@@ -116,6 +122,8 @@ public class UserController {
         user.setEmail(email);
         userService.update(user);
 
+        LOGGER.info("Пользователь {} обновил профиль", username);
+
         return "redirect:/profile";
     }
 
@@ -129,6 +137,7 @@ public class UserController {
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.update(user);
+            LOGGER.info("Пароль для пользователя {} обновлен", currentUsername);
 
             return "redirect:/profile";
         } else {
@@ -162,6 +171,8 @@ public class UserController {
         userProfile.setInfo(info);
 
         userProfileService.update(userProfile);
+
+        LOGGER.info("Пользователь {} обновил информацию о своем профиле", username);
         return "redirect:/profile";
     }
 }
