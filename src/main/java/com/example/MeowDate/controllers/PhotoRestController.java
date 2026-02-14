@@ -25,7 +25,7 @@ public class PhotoRestController {
     public ResponseEntity<byte[]> getPhoto(@PathVariable Long id) {
         Photo photo = photoService.getPhotoById(id);
 
-        if (photo.getBytes() == null || photo == null) {
+        if (photo.getBytes() == null) {
             LOGGER.info("Фото с id = {} не найдено", id);
             return ResponseEntity.notFound().build();
         }
