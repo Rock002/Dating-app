@@ -90,6 +90,8 @@ public class UserController {
         User currentUser = userService.findByUsername(username);
 
         model.addAttribute("user", currentUser);
+
+        LOGGER.info("Переход на страницу редактирования профиля пользователя {}", username);
         return "profileEdit";
     }
 
@@ -99,6 +101,7 @@ public class UserController {
         User currentUser = userService.findByUsername(username);
         model.addAttribute("user", currentUser);
 
+        LOGGER.info("Переход на страницу изменения профиля пользователя {}", username);
         return "profileChange";
     }
 
@@ -108,6 +111,7 @@ public class UserController {
         User currentUser = userService.findByUsername(username);
         model.addAttribute("user", currentUser);
 
+        LOGGER.info("Переход на страницу смены пароля пользователя {}", username);
         return "passwordChangeForm";
     }
 
@@ -123,7 +127,6 @@ public class UserController {
         userService.update(user);
 
         LOGGER.info("Пользователь {} обновил профиль", username);
-
         return "redirect:/profile";
     }
 
@@ -137,10 +140,11 @@ public class UserController {
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.update(user);
-            LOGGER.info("Пароль для пользователя {} обновлен", currentUsername);
 
+            LOGGER.info("Пароль для пользователя {} обновлен", currentUsername);
             return "redirect:/profile";
         } else {
+            LOGGER.info("Не удалось обновить пароль для пользователя {}", currentUsername);
             return "redirect:/profile/error-password-change";
         }
 

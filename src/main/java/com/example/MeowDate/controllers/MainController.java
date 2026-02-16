@@ -3,8 +3,9 @@ package com.example.MeowDate.controllers;
 import com.example.MeowDate.models.*;
 import com.example.MeowDate.services.LikeService;
 import com.example.MeowDate.services.MatchService;
-import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,13 +20,12 @@ public class MainController {
 
     private final UserService userService;
     private final LikeService likeService;
-    private final PhotoService photoService;
     private final MatchService matchService;
+    private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
 
-    public MainController(UserService userService, LikeService likeService, PhotoService photoService, MatchService matchService) {
+    public MainController(UserService userService, LikeService likeService, MatchService matchService) {
         this.userService = userService;
         this.likeService = likeService;
-        this.photoService = photoService;
         this.matchService = matchService;
     }
 
@@ -38,6 +38,7 @@ public class MainController {
         if (userProfile.getLocation() == null ||
                 userProfile.getBirthDate() == null ||
                 userProfile.getSex() == '\u0000') {
+            LOGGER.info("Пользователь {} не указал информацию о себе для просмотре анкет", username);
             return "errorMainPage";
         }
 
@@ -54,6 +55,8 @@ public class MainController {
         model.addAttribute("profiles", otherUsers);
         model.addAttribute("currentUsername", username);
         model.addAttribute("profileFirstPhotoIds", profileFirstPhotoIds);
+
+        LOGGER.info("Переход на главную страницу пользователя {}", username);
         return "main";
     }
 
@@ -64,6 +67,7 @@ public class MainController {
         List<Like> likes = likeService.findByReceiver(user);
         model.addAttribute("likes", likes);
 
+        LOGGER.info("Переход страницу лайков пользователя {}", username);
         return "likes";
     }
 
@@ -78,11 +82,13 @@ public class MainController {
         model.addAttribute("currentUser", currentUser);
         model.addAttribute("matchService", matchService);
 
+        LOGGER.info("Переход на страницу мэтчей пользователя {}", currentUsername);
         return "matches";
     }
 
     @GetMapping("/chats")
-    public String chatsPage() {
+    public String chatsPage(Authentication authentication) {
+        LOGGER.info("Переход на страницу чатов пользователя {}", authentication.getName());
         return "chats";
     }
 }
