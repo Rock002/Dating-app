@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "messages")
 public class ChatMessage {
     @Id
@@ -50,49 +54,5 @@ public class ChatMessage {
 
     public ChatMessage() {
         this.timestamp = LocalDateTime.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public Long getSenderId() {
-        return senderId;
-    }
-
-    public Long getReceiverId() {
-        return receiverId;
-    }
-
-    public String getSenderName() {
-        return senderName;
-    }
-
-    public String getContent() {
-        return content;
-    }
-
-    public LocalDateTime getTimestamp() {
-        return timestamp;
-    }
-
-    public void setSenderID(Long senderId) {
-        this.senderId = senderId;
-    }
-
-    public void setReceiverId(Long receiverId) {
-        this.receiverId = receiverId;
-    }
-
-    public void setSenderName(String senderName) {
-        this.senderName = senderName;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
     }
 }

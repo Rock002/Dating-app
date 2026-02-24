@@ -4,12 +4,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "users")
 public class User {
     @Id
@@ -41,64 +45,4 @@ public class User {
     private List<Photo> photos = new ArrayList<>(List.of(new Photo()));
 
     public User() {}
-
-    public String getUsername() {
-        return username;
-    }
-
-    public UserProfile getUserProfile() {
-        return userProfile;
-    }
-
-    public List<Photo> getPhotos() {
-        return photos;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public UserProfile getUserProfileId() {
-        return userProfile;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getRoles() {
-        return roles;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setUserProfileId(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
-
-    public void setRoles(String roles) {
-        this.roles = roles;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public void setUserProfile(UserProfile userProfile) {
-        this.userProfile = userProfile;
-    }
-
-    public void setPhotos(List<Photo> photos) {
-        this.photos = photos;
-    }
 }

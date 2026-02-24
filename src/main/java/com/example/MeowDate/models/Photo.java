@@ -2,9 +2,13 @@ package com.example.MeowDate.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "photos")
 public class Photo {
     @Id
@@ -34,37 +38,5 @@ public class Photo {
         this.originFileName = originFileName;
         this.isGeneralPhoto = isGeneralPhoto;
         this.bytes = bytes;
-    }
-
-    public String getOriginFileName() {
-        return originFileName;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public boolean isGeneralPhoto() {
-        return isGeneralPhoto;
-    }
-
-    public byte[] getBytes() {
-        return bytes;
-    }
-
-    public void setOriginFileName(String originFileName) {
-        this.originFileName = originFileName;
-    }
-
-    public void setGeneralPhoto(boolean generalPhoto) {
-        isGeneralPhoto = generalPhoto;
-    }
-
-    public void setBytes(byte[] bytes) {
-        this.bytes = bytes;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
     }
 }

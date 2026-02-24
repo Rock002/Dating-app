@@ -20,9 +20,11 @@ public class LoggerService {
             } else if (result.isCanceled()){
                 System.out.println("canceled");
             } else {
-                System.out.println("succes");
+                System.out.println("success");
             }
             return BoxedUnit.UNIT;
         }, runtime);
     }
+
+
 }

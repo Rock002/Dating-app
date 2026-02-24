@@ -2,11 +2,15 @@ package com.example.MeowDate.models;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@Getter
+@Setter
 @Table(name = "likes")
 public class Like {
     @Id
@@ -31,33 +35,5 @@ public class Like {
         this.sender = sender;
         this.receiver = receiver;
         this.dateOfLike = LocalDate.now();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public User getSender() {
-        return sender;
-    }
-
-    public User getReceiver() {
-        return receiver;
-    }
-
-    public LocalDate getDateOfLike() {
-        return dateOfLike;
-    }
-
-    public void setSender(User sender) {
-        this.sender = sender;
-    }
-
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
-    }
-
-    public void setDateOfLike(LocalDate dateOfLike) {
-        this.dateOfLike = dateOfLike;
     }
 }

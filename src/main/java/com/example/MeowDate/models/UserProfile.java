@@ -4,11 +4,15 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@Getter
+@Setter
 public class UserProfile {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -46,57 +50,5 @@ public class UserProfile {
         this.location = location;
         this.info = info;
         this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public String getLocation() {
-        return location;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public char getSex() {
-        return sex;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
-
-    public void setLocation(String location) {
-        this.location = location;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public void setSex(char sex) {
-        this.sex = sex;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
     }
 }
