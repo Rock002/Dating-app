@@ -3,19 +3,16 @@ package com.example.MeowDate.services;
 import com.example.MeowDate.models.Match;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.repository.MatchRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MatchService {
-
     private final MatchRepository matchRepository;
-
-    public MatchService(MatchRepository matchRepository) {
-        this.matchRepository = matchRepository;
-    }
 
     public void save(Match match) {
         matchRepository.save(match);

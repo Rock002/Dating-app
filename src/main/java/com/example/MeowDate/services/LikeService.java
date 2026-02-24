@@ -3,6 +3,7 @@ package com.example.MeowDate.services;
 import com.example.MeowDate.models.Like;
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.repository.LikeRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,12 +12,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class LikeService {
     private final LikeRepository likeRepository;
-
-    public LikeService(LikeRepository likeRepository) {
-        this.likeRepository = likeRepository;
-    }
 
     @Transactional
     public List<Like> findByReceiver(User receiver) {
@@ -24,8 +22,8 @@ public class LikeService {
         List<Like> likes = likesWithOptional.stream()
                 .map(like -> like.orElse(null))
                 .collect(Collectors.toList());
-        return likes;
 
+        return likes;
     }
 
     public void save(Like like) {
@@ -58,7 +56,4 @@ public class LikeService {
     public void delete(Like like) {
         likeRepository.delete(like);
     }
-
-//    @Transactional
-//    public void deleteBothLike(User user1, User user2) {}
 }

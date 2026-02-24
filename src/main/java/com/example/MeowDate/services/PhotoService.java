@@ -2,18 +2,16 @@ package com.example.MeowDate.services;
 
 import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.repository.PhotoRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PhotoService {
     private final PhotoRepository photoRepository;
-
-    public PhotoService(PhotoRepository photoRepository) {
-        this.photoRepository = photoRepository;
-    }
 
     @Transactional
     public void savePhotos(List<Photo> photoList) {

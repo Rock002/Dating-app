@@ -68,7 +68,7 @@ public class WebSocketChatController {
                 return;
             }
 
-            message.setSenderID(sender.getId());
+            message.setSenderId(sender.getId());
             message.setSenderName(sender.getUsername());
 
             if (message.getTimestamp() == null) {
