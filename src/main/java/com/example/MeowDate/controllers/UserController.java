@@ -2,12 +2,12 @@ package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.User;
 import com.example.MeowDate.models.UserProfile;
-import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserProfileService;
 import com.example.MeowDate.services.UserService;
+import com.example.MeowDate.services.photo.PhotoWithCacheService;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -20,20 +20,14 @@ import java.time.LocalDate;
 
 
 @Controller
+@RequiredArgsConstructor
+@Slf4j
 public class UserController {
 
     private final UserService userService;
-    private final PhotoService photoService;
+    private final PhotoWithCacheService photoWithCacheService;
     private final UserProfileService userProfileService;
     private final PasswordEncoder passwordEncoder;
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserController.class);
-
-    public UserController(UserService userService, PhotoService photoService, UserProfileService userProfileService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.photoService = photoService;
-        this.userProfileService = userProfileService;
-        this.passwordEncoder = passwordEncoder;
-    }
 
     @GetMapping("/login")
     public String loginPage() {
@@ -49,7 +43,7 @@ public class UserController {
     public String profile(Authentication authentication, Model model) {
         User user = userService.findByUsername(authentication.getName());
 
-        var photos = photoService.getPhotosByUserId(user.getId());
+        var photos = photoWithCacheService.getPhotosByUserId(user.getId());
 
         model.addAttribute("user", user);
         model.addAttribute("photos", photos);
@@ -63,7 +57,7 @@ public class UserController {
         user.setRoles("USER");
 
         userService.save(user);
-        LOGGER.info("Зарегестрирован пользователь {}", user.getUsername());
+        log.info("Зарегестрирован пользователь {}", user.getUsername());
 
         UserProfile userProfile = new UserProfile();
         userProfile.setFirstName(user.getUsername());
@@ -73,14 +67,14 @@ public class UserController {
         user.setUserProfile(userProfile);
 
         userProfileService.save(userProfile);
-        LOGGER.info("Сохранена дополнительная информация о пользователе {}", user.getUsername());
+        log.info("Сохранена дополнительная информация о пользователе {}", user.getUsername());
 
         return "redirect:/login";
     }
 
     @GetMapping("/profile/error-password-change")
     public String errorPasswordChange(Authentication authentication) {
-        LOGGER.info("Ошибка при смена пароля для пользователя {}", authentication.getName());
+        log.info("Ошибка при смена пароля для пользователя {}", authentication.getName());
         return "errorPasswordChange";
     }
 
@@ -91,7 +85,7 @@ public class UserController {
 
         model.addAttribute("user", currentUser);
 
-        LOGGER.info("Переход на страницу редактирования профиля пользователя {}", username);
+        log.info("Переход на страницу редактирования профиля пользователя {}", username);
         return "profileEdit";
     }
 
@@ -101,7 +95,7 @@ public class UserController {
         User currentUser = userService.findByUsername(username);
         model.addAttribute("user", currentUser);
 
-        LOGGER.info("Переход на страницу изменения профиля пользователя {}", username);
+        log.info("Переход на страницу изменения профиля пользователя {}", username);
         return "profileChange";
     }
 
@@ -111,7 +105,7 @@ public class UserController {
         User currentUser = userService.findByUsername(username);
         model.addAttribute("user", currentUser);
 
-        LOGGER.info("Переход на страницу смены пароля пользователя {}", username);
+        log.info("Переход на страницу смены пароля пользователя {}", username);
         return "passwordChangeForm";
     }
 
@@ -126,7 +120,7 @@ public class UserController {
         user.setEmail(email);
         userService.update(user);
 
-        LOGGER.info("Пользователь {} обновил профиль", username);
+        log.info("Пользователь {} обновил профиль", username);
         return "redirect:/profile";
     }
 
@@ -141,10 +135,10 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.update(user);
 
-            LOGGER.info("Пароль для пользователя {} обновлен", currentUsername);
+            log.info("Пароль для пользователя {} обновлен", currentUsername);
             return "redirect:/profile";
         } else {
-            LOGGER.info("Не удалось обновить пароль для пользователя {}", currentUsername);
+            log.info("Не удалось обновить пароль для пользователя {}", currentUsername);
             return "redirect:/profile/error-password-change";
         }
 
@@ -176,7 +170,7 @@ public class UserController {
 
         userProfileService.update(userProfile);
 
-        LOGGER.info("Пользователь {} обновил информацию о своем профиле", username);
+        log.info("Пользователь {} обновил информацию о своем профиле", username);
         return "redirect:/profile";
     }
 }

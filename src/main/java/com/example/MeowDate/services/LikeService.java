@@ -26,10 +26,6 @@ public class LikeService {
         return likes;
     }
 
-    public void save(Like like) {
-        likeRepository.save(like);
-    }
-
     public boolean isLikeExist(Like like) {
         List<Like> likes = findByReceiver(like.getReceiver());
 

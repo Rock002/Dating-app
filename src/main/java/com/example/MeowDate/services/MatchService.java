@@ -14,10 +14,6 @@ import java.util.List;
 public class MatchService {
     private final MatchRepository matchRepository;
 
-    public void save(Match match) {
-        matchRepository.save(match);
-    }
-
     public void createAndSaveMatch(User user1, User user2) {
         if (!isMatch(user1, user2)) {
             Match newMatch = new Match(user1, user2);
@@ -30,20 +26,7 @@ public class MatchService {
         return matchRepository.findAllByUser(user);
     }
 
-    @Transactional
-    public void deleteMatch(Long id) {
-        matchRepository.deleteById(id);
-    }
-
     public boolean isMatch(User user1, User user2) {
         return !matchRepository.findByUsers(user1, user2).isEmpty();
-    }
-
-    public User getOtherUserInMatch(Match match, User currentUser) {
-        if (match.getUser1().getId().equals(currentUser.getId())) {
-            return match.getUser2();
-        }
-
-        return match.getUser1();
     }
 }

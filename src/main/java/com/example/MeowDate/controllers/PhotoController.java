@@ -2,8 +2,8 @@ package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.models.User;
-import com.example.MeowDate.services.PhotoService;
 import com.example.MeowDate.services.UserService;
+import com.example.MeowDate.services.photo.PhotoWithCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
@@ -21,12 +21,12 @@ import java.util.List;
 @Controller
 @RequestMapping("/photos")
 public class PhotoController {
-    private final PhotoService photoService;
+    private final PhotoWithCacheService photoWithCacheService;
     private final UserService userService;
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoController.class);
 
-    public PhotoController(PhotoService photoService, UserService userService) {
-        this.photoService = photoService;
+    public PhotoController(PhotoWithCacheService photoWithCacheService, UserService userService) {
+        this.photoWithCacheService = photoWithCacheService;
         this.userService = userService;
     }
 
@@ -72,7 +72,7 @@ public class PhotoController {
 
         user.setPhotos(photoList);
 
-        photoService.savePhotos(photoList);
+        photoWithCacheService.savePhotos(photoList, user.getId());
         LOGGER.info("Фото сохранены в базе для пользователя {}", user.getUsername());
 
         return "redirect:/profile";

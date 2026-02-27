@@ -1,7 +1,7 @@
 package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Photo;
-import com.example.MeowDate.services.PhotoService;
+import com.example.MeowDate.services.photo.PhotoWithCacheService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -14,16 +14,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/images")
 public class PhotoRestController {
-    private final PhotoService photoService;
+    private final PhotoWithCacheService photoWithCacheService;
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoRestController.class);
 
-    public PhotoRestController(PhotoService photoService) {
-        this.photoService = photoService;
+    public PhotoRestController(PhotoWithCacheService photoWithCacheService) {
+        this.photoWithCacheService = photoWithCacheService;
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getPhoto(@PathVariable Long id) {
-        Photo photo = photoService.getPhotoById(id);
+        Photo photo = photoWithCacheService.getPhotoById(id);
 
         if (photo.getBytes() == null) {
             LOGGER.info("Фото с id = {} не найдено", id);
