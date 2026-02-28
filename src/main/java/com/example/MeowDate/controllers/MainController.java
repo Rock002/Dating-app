@@ -4,30 +4,27 @@ import com.example.MeowDate.models.*;
 import com.example.MeowDate.services.LikeService;
 import com.example.MeowDate.services.MatchService;
 import com.example.MeowDate.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Controller
+@RequiredArgsConstructor
 public class MainController {
-
     private final UserService userService;
     private final LikeService likeService;
     private final MatchService matchService;
     private static final Logger LOGGER = LoggerFactory.getLogger(MainController.class);
-
-    public MainController(UserService userService, LikeService likeService, MatchService matchService) {
-        this.userService = userService;
-        this.likeService = likeService;
-        this.matchService = matchService;
-    }
 
     @GetMapping("/")
     public String mainPage(Authentication authentication, Model model) {

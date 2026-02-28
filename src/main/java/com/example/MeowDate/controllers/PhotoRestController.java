@@ -2,24 +2,20 @@ package com.example.MeowDate.controllers;
 
 import com.example.MeowDate.models.Photo;
 import com.example.MeowDate.services.photo.PhotoWithCacheService;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/images")
+@RequiredArgsConstructor
 public class PhotoRestController {
     private final PhotoWithCacheService photoWithCacheService;
     private static final Logger LOGGER = LoggerFactory.getLogger(PhotoRestController.class);
-
-    public PhotoRestController(PhotoWithCacheService photoWithCacheService) {
-        this.photoWithCacheService = photoWithCacheService;
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<byte[]> getPhoto(@PathVariable Long id) {

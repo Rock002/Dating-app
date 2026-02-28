@@ -15,8 +15,7 @@ public class RedisConfig {
 
     @Bean
     public RedisTemplate<String, Photo> redisPhotoTemplate(
-            RedisConnectionFactory redisConnectionFactory,
-            ObjectMapper objectMapper
+            RedisConnectionFactory redisConnectionFactory
     ) {
         RedisTemplate<String, Photo> redisTemplate = new RedisTemplate<>();
 
@@ -24,7 +23,6 @@ public class RedisConfig {
 
         redisTemplate.setKeySerializer(new StringRedisSerializer());
 
-//        var serializer = new JacksonJsonRedisSerializer<>(objectMapper, Photo.class);
         var serializer = new JdkSerializationRedisSerializer();
         redisTemplate.setValueSerializer(serializer);
 

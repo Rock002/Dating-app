@@ -7,13 +7,14 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
 @Entity
 @Data
 @Getter
 @Setter
-public class UserProfile {
+public class UserProfile implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "id")
